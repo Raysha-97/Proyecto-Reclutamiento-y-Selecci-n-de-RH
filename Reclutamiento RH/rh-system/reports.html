@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes | Sistema RH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- jsPDF para exportar a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>REPORTES DEL SISTEMA</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="candidates.html"><i class="fas fa-user-tie"></i> Candidatos</a></li>
+                    <li><a href="positions.html"><i class="fas fa-briefcase"></i> Puestos</a></li>
+                    <li><a href="employees.html"><i class="fas fa-id-card"></i> Empleados</a></li>
+                    <li><a href="reports.html" class="active"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="app-main">
+            <div class="view-header">
+                <h2 class="view-title"><i class="fas fa-chart-bar"></i> Reportes Resumidos</h2>
+                <button id="export-pdf" class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i> Exportar a PDF
+                </button>
+            </div>
+
+            <div class="reports-container" id="report-content">
+                <!-- Sección de resumen general simplificada -->
+                <div class="report-section">
+                    <h3><i class="fas fa-info-circle"></i> Resumen General</h3>
+                    <div class="simple-stats">
+                        <div class="stat-item">
+                            <h4>Candidatos Registrados</h4>
+                            <p id="total-candidates">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Puestos Disponibles</h4>
+                            <p id="total-positions">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>Empleados Activos</h4>
+                            <p id="total-employees">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla única de empleados -->
+                <div class="report-section">
+                    <h3><i class="fas fa-users"></i> Listado de Empleados</h3>
+                    <table class="simple-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Puesto</th>
+                                <th>Departamento</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employees-data">
+                            <!-- Datos de empleados se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Sistema de Reclutamiento RH &copy; 2025 - Todos los derechos reservados</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/services/candidatesService.js"></script>
+    <script src="js/services/positionsService.js"></script>
+    <script src="js/services/employeesService.js"></script>
+    
+    <script>
+        // Habilitar jsPDF
+        const { jsPDF } = window.jspdf;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar datos básicos
+            const candidates = candidatesService.getAllCandidates();
+            const positions = positionsService.getAllPositions();
+            const employees = employeesService.getAllEmployees();
+            
+            // Actualizar resumen
+            document.getElementById('total-candidates').textContent = candidates.length;
+            document.getElementById('total-positions').textContent = positions.length;
+            document.getElementById('total-employees').textContent = 
+                employees.filter(e => e.status === 'Activo').length;
+            
+            // Cargar tabla de empleados
+            const employeesTable = document.getElementById('employees-data');
+            employeesTable.innerHTML = '';
+            
+            employees.forEach(employee => {
+                const position = positionsService.getPositionById(employee.positionId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${employee.name}</td>
+                    <td>${position ? position.name : 'N/A'}</td>
+                    <td>${employee.department}</td>
+                    <td><span class="status-badge ${employee.status.toLowerCase()}">${employee.status}</span></td>
+                `;
+                employeesTable.appendChild(row);
+            });
+
+            // Configurar botón de exportar PDF
+            document.getElementById('export-pdf').addEventListener('click', exportToPDF);
+        });
+
+        function exportToPDF() {
+            // Crear nuevo documento PDF
+            const doc = new jsPDF();
+            
+            // Título del reporte
+            doc.setFontSize(18);
+            doc.setTextColor(40);
+            doc.text('Reporte de Recursos Humanos', 105, 20, { align: 'center' });
+            
+            // Fecha de generación
+            doc.setFontSize(10);
+            doc.text(`Generado el: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+            
+            // Estadísticas resumidas
+            doc.setFontSize(14);
+            doc.text('Resumen General', 14, 40);
+            
+            doc.setFontSize(12);
+            doc.text(`• Candidatos Registrados: ${document.getElementById('total-candidates').textContent}`, 20, 50);
+            doc.text(`• Puestos Disponibles: ${document.getElementById('total-positions').textContent}`, 20, 60);
+            doc.text(`• Empleados Activos: ${document.getElementById('total-employees').textContent}`, 20, 70);
+            
+            // Tabla de empleados
+            doc.setFontSize(14);
+            doc.text('Listado de Empleados', 14, 85);
+            
+            // Preparar datos para la tabla
+            const employees = employeesService.getAllEmployees();
+            const positions = positionsService.getAllPositions();
+            
+            const tableData = employees.map(employee => {
+                const position = positions.find(p => p.id === employee.positionId);
+                return [
+                    employee.name,
+                    position ? position.name : 'N/A',
+                    employee.department,
+                    employee.status
+                ];
+            });
+            
+            // Generar tabla
+            doc.autoTable({
+                head: [['Nombre', 'Puesto', 'Departamento', 'Estado']],
+                body: tableData,
+                startY: 90,
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3,
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [78, 115, 223],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                },
+                margin: { top: 10 }
+            });
+            
+            // Guardar el PDF
+            doc.save('Reporte_RH_' + new Date().toISOString().slice(0, 10) + '.pdf');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reclutamiento RH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>RECLUTAMIENTO RH</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="candidates.html"><i class="fas fa-user-tie"></i> Candidatos</a></li>
+                    <li><a href="positions.html"><i class="fas fa-briefcase"></i> Puestos</a></li>
+                    <li><a href="employees.html"><i class="fas fa-id-card"></i> Empleados</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="app-main">
+            <div class="welcome-container">
+                <h2>Bienvenido al Sistema de Reclutamiento</h2>
+                <p>Seleccione una opción del menú para comenzar</p>
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-user-tie"></i>
+                        <h3 id="candidates-count">0</h3>
+                        <p>Candidatos</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-briefcase"></i>
+                        <h3 id="positions-count">0</h3>
+                        <p>Puestos</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-id-card"></i>
+                        <h3 id="employees-count">0</h3>
+                        <p>Empleados</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Sistema de Reclutamiento RH &copy; 2025 - Todos los derechos reservados</p>
+        </footer>
+    </div>
+
+    <script src="js/services/candidatesService.js"></script>
+    <script src="js/services/positionsService.js"></script>
+    <script src="js/services/employeesService.js"></script>
+    <script>
+        // Mostrar estadísticas rápidas
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('candidates-count').textContent = 
+                candidatesService.getAllCandidates().length;
+            document.getElementById('positions-count').textContent = 
+                positionsService.getAllPositions().length;
+            document.getElementById('employees-count').textContent = 
+                employeesService.getAllEmployees().length;
+        });
+    </script>
+</body>
+</html>

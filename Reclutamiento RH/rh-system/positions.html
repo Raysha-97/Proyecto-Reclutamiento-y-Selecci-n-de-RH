@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puestos | Sistema RH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>GESTIÓN DE PUESTOS</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="candidates.html"><i class="fas fa-user-tie"></i> Candidatos</a></li>
+                    <li><a href="positions.html" class="active"><i class="fas fa-briefcase"></i> Puestos</a></li>
+                    <li><a href="employees.html"><i class="fas fa-id-card"></i> Empleados</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="app-main">
+            <div class="view-header">
+                <h2 class="view-title"><i class="fas fa-briefcase"></i> Puestos en la Empresa</h2>
+                <button id="add-position" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nuevo Puesto
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table id="positions-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Departamento</th>
+                            <th>Rango Salarial</th>
+                            <th>Empleados</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los puestos se cargarán aquí con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Sistema de Reclutamiento RH &copy; 2025 - Todos los derechos reservados</p>
+        </footer>
+    </div>
+
+    <!-- Modal para formulario de puestos -->
+    <div id="position-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Nuevo Puesto</h2>
+            <form id="position-form">
+                <input type="hidden" id="position-id">
+                
+                <div class="form-group">
+                    <label for="position-name">Nombre del Puesto*</label>
+                    <input type="text" id="position-name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="position-description">Descripción</label>
+                    <textarea id="position-description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="position-department">Departamento*</label>
+                        <input type="text" id="position-department" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="position-risk">Nivel de Riesgo*</label>
+                        <select id="position-risk" class="form-control" required>
+                            <option value="Bajo">Bajo</option>
+                            <option value="Medio">Medio</option>
+                            <option value="Alto">Alto</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="position-min-salary">Salario Mínimo (RD$)*</label>
+                        <input type="number" id="position-min-salary" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="position-max-salary">Salario Máximo (RD$)*</label>
+                        <input type="number" id="position-max-salary" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Competencias Requeridas*</label>
+                    <div id="required-skills" class="checkbox-container"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Idiomas Requeridos</label>
+                    <div id="required-languages" class="checkbox-container"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Capacitaciones Requeridas</label>
+                    <div id="required-trainings" class="checkbox-container"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancel-form" class="btn btn-danger">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/services/positionsService.js"></script>
+    <script src="js/services/skillsService.js"></script>
+    <script src="js/services/languagesService.js"></script>
+    <script src="js/services/trainingsService.js"></script>
+    <script src="js/services/employeesService.js"></script>
+    
+    <script src="js/views/positionsView.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const positionsView = new PositionsView();
+            positionsView.init();
+        });
+    </script>
+</body>
+</html>
